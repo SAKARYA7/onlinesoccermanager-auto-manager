@@ -16,7 +16,7 @@ dotenv.config({ path: path.resolve(__dirname, '.', '.env') });
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 4 * 60 * 1000,
+  timeout: 4 * 60 * 1000, // change CAREFULLY this param. A video lasts ~30 seconds, each test can play a maximum of 4 videos
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
