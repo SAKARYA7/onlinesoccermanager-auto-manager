@@ -9,35 +9,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build on ubuntu-latest armv7
+    strategy:
+      matrix:
+        docker_target: [ 'arm:linux/arm64']
     steps:
-          - 
-            name: Run on arm64
-            uses: uraimo/run-on-arch-action@v2
-            id: runcmd
-            with:
-              arch: armv7
-              distro: ubuntu_latest
-          -
-            name: Checkout 
-            uses: actions/checkout@v3
-          -
-            name: Login to Docker Hub
-            uses: docker/login-action@v2
-            with:
-              username: ${{ secrets.DOCKER_HUB_USERNAME }}
-              password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          -
-            name: Set up Docker Buildx
-            uses: docker/setup-buildx-action@v2
-            with:
-              publish: true
-              platforms: linux/arm64
-          -
-            name: Build and push
-            uses: docker/build-push-action@v3
-            with:
-              context: .
-              file: ./Dockerfile
-              push: true
-              tags: ${{ secrets.DOCKER_HUB_USERNAME }}/onlinesoccermanager-auto-manager:latest
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: docker buildx ${{ matrix.docker_target }}
+      run: |
+        DOCKER_FILE=$(echo "${{ matrix.docker_target }}" | cut -f1 -d:)/Dockerfile
+        DOCKER_IMAGE=myImageName:latest
+        DOCKER_PLATFORM=$(echo "${{ matrix.docker_target }}" | cut -f2 -d:)
+        docker buildx build . --no-cache --platform ${DOCKER_PLATFORM} -t "${DOCKER_IMAGE}" -f "${DOCKER_FILE}" --push
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/onlinesoccermanager-auto-manager:latest
