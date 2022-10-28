@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test'
 
 test('To get free coins it should', async ({ page }, testInfo) => {
+  const OSM_USERNAME = process.env.OSM_LOGIN_USERNAME || ""
+  const OSM_PASSWORD = process.env.OSM_LOGIN_PASSWORD || ""
+  await test.step('get OSM credentials', async () => {
+    if(!OSM_USERNAME || !OSM_PASSWORD) {
+      testInfo.annotations.push({ type: 'error', description: `Check OSM credentials file, credentials seems not valid` })
+      test.fail()
+    }
+  })
   await test.step('login to OSM', async () => {
     await page.goto('https://en.onlinesoccermanager.com/')
     await expect(page).toHaveTitle(/OSM/)
@@ -10,8 +18,8 @@ test('To get free coins it should', async ({ page }, testInfo) => {
   await test.step('accept cookies', async () => {
     await page.goto('https://en.onlinesoccermanager.com/Login')
     await expect(page).toHaveTitle(/OSM/)
-    await page.locator('xpath=//*[@id="manager-name"]').fill(process.env.OSM_LOGIN_USERNAME || "")
-    await page.locator('xpath=//*[@id="password"]').fill(process.env.OSM_LOGIN_PASSWORD || "")
+    await page.locator('xpath=//*[@id="manager-name"]').fill(OSM_USERNAME)
+    await page.locator('xpath=//*[@id="password"]').fill(OSM_PASSWORD)
     await page.locator('xpath=//*[@id="login"]').click()
   })
   await test.step('open balances modal', async () => {
