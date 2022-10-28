@@ -1,7 +1,7 @@
 FROM --platform=linux/arm64 mcr.microsoft.com/playwright:focal
 
 # install git
-RUN apt get install -y git
+RUN apt-get install -y git
 
 # fetch and copy project
 COPY . /app
