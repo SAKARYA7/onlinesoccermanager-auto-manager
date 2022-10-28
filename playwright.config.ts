@@ -45,6 +45,7 @@ const config: PlaywrightTestConfig = {
   /* Configure projects for major browsers */
   projects: [
     {
+      // using firefox. Chromium crashes with docker with platform=arm64 (using official docker image of playwright by Microsoft)
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
