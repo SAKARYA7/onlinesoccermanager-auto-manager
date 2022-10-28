@@ -27,7 +27,7 @@ jobs:
     - name: docker buildx ${{ matrix.docker_target }}
       run: |
         DOCKER_FILE=$(echo "${{ matrix.docker_target }}" | cut -f1 -d:)/Dockerfile
-        DOCKER_IMAGE=myImageName:latest
+        DOCKER_IMAGE=onlinesoccermanager-auto-manager:latest
         DOCKER_PLATFORM=$(echo "${{ matrix.docker_target }}" | cut -f2 -d:)
         docker buildx build . --no-cache --platform ${DOCKER_PLATFORM} -t "${DOCKER_IMAGE}" -f "${DOCKER_FILE}" --push
     - name: Build and push
