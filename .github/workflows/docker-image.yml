@@ -9,7 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: Build on ubuntu-latest armv7
     steps:
+          - 
+            name: Run on arm64
+            uses: uraimo/run-on-arch-action@v2
+            id: runcmd
+            with:
+              arch: armv7
+              distro: ubuntu_latest
           -
             name: Checkout 
             uses: actions/checkout@v3
