@@ -9,6 +9,3 @@ RUN npm install
 
 # Install browsers
 RUN npx playwright install --with-deps
-
-# Run playwright test
-RUN npx playwright show-report
