@@ -32,6 +32,8 @@ test('To get boss coins it should', async ({ page }, testInfo) => {
   let i = 0
   while (i < 5) {
     await test.step(`if available play video number ${i}`, async () => {
+      await page.reload()
+      await new Promise(r => setTimeout(r, 3000))
       await page.locator('//*[@id="body-content"]/div[2]/div[2]/div/div[1]/div').click()
       await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toBeVisible()
       .then(async () => {
