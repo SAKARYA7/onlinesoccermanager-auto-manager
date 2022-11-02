@@ -21,19 +21,23 @@ test('To get free coins it should', async ({ page }, testInfo) => {
     await page.locator('xpath=//*[@id="manager-name"]').fill(OSM_USERNAME)
     await page.locator('xpath=//*[@id="password"]').fill(OSM_PASSWORD)
     await page.locator('xpath=//*[@id="login"]').click()
-  })
-  await test.step('open balances modal', async () => {
-    await page.locator('xpath=//*[@id="balances"]/div/div[3]').click({ force: true })
+    await new Promise(r => setTimeout(r, 5000))
   })
   let i = 0
-  while(i < 5) {
-    await test.step(`if available play video number ${i}`, async () => {
+  const MAX_RETRIES = 15
+  while(i < MAX_RETRIES) {
+    await test.step('open balances modal', async () => {
+      await page.reload()
+      await new Promise(r => setTimeout(r, 5000))
+      await page.locator('xpath=//*[@id="balances"]/div/div[3]').click({ force: true })
+    })
+    await test.step(`if available play video (try ${i})`, async () => {
       await page.locator('xpath=//*[@id="product-category-free"]/div[2]/div[1]/div').click()
       await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toBeVisible()
         .then(async () => {
           await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toHaveText(/show video/).then(() => {
             testInfo.annotations.push({ type: 'info', description: `${i} videos played. No more videos available` })
-            i = 5
+            i = MAX_RETRIES
           })
         })
         .catch(async () => {

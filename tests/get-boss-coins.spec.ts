@@ -30,8 +30,9 @@ test('To get boss coins it should', async ({ page }, testInfo) => {
     await expect(page).toHaveTitle(/Business/)
   })
   let i = 0
-  while (i < 5) {
-    await test.step(`if available play video number ${i}`, async () => {
+  const MAX_RETRIES = 15
+  while(i < MAX_RETRIES) {
+    await test.step(`if available play video (try ${i})`, async () => {
       await page.reload()
       await new Promise(r => setTimeout(r, 3000))
       await page.locator('//*[@id="body-content"]/div[2]/div[2]/div/div[1]/div').click()
@@ -39,7 +40,7 @@ test('To get boss coins it should', async ({ page }, testInfo) => {
       .then(async () => {
         await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toHaveText(/show video/).then(() => {
           testInfo.annotations.push({ type: 'info', description: `${i} videos played. No more videos available` })
-          i = 5
+          i = MAX_RETRIES
         })
       })
       .catch(async () => {
