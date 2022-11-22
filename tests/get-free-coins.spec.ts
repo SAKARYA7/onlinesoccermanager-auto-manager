@@ -4,7 +4,7 @@ test('To get free coins it should', async ({ page }, testInfo) => {
   const OSM_USERNAME = process.env.OSM_LOGIN_USERNAME || ""
   const OSM_PASSWORD = process.env.OSM_LOGIN_PASSWORD || ""
   await test.step('get OSM credentials', async () => {
-    if(!OSM_USERNAME || !OSM_PASSWORD) {
+    if (!OSM_USERNAME || !OSM_PASSWORD) {
       testInfo.annotations.push({ type: 'error', description: `Check OSM credentials file, credentials seems not valid` })
       test.fail()
     }
@@ -23,29 +23,21 @@ test('To get free coins it should', async ({ page }, testInfo) => {
     await page.locator('xpath=//*[@id="login"]').click()
     await new Promise(r => setTimeout(r, 5000))
   })
-  let i = 0
-  const MAX_RETRIES = 15
-  while(i < MAX_RETRIES) {
-    await test.step('open balances modal', async () => {
-      await page.reload()
-      await new Promise(r => setTimeout(r, 5000))
-      await page.locator('xpath=//*[@id="balances"]/div/div[3]').click({ force: true })
-    })
-    await test.step(`if available play video (try ${i})`, async () => {
-      await page.locator('xpath=//*[@id="product-category-free"]/div[2]/div[1]/div').click()
-      await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toBeVisible()
-        .then(async () => {
-          await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toHaveText(/show video/).then(() => {
-            testInfo.annotations.push({ type: 'info', description: `${i} videos played. No more videos available` })
-            i = MAX_RETRIES
-          })
-        })
-        .catch(async () => {
-          await new Promise(r => setTimeout(r, 35000))
-          i++
-        })
-    })
-  }
+  await test.step('open balances modal', async () => {
+    await page.reload()
+    await new Promise(r => setTimeout(r, 5000))
+    await page.locator('xpath=//*[@id="balances"]/div/div[3]').click({ force: true })
+  })
+  await test.step(`if available play video`, async () => {
+    await page.locator('xpath=//*[@id="product-category-free"]/div[2]/div[1]/div').click()
+    await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toBeVisible()
+      .then(async () => {
+        await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toHaveText(/show video/).then(() => {})
+      })
+      .catch(async () => {
+        await new Promise(r => setTimeout(r, 35000))
+      })
+  })
   await test.step('get amount of coins', async () => {
     await page.goto('https://en.onlinesoccermanager.com/Career')
     await expect(page).toHaveTitle(/OSM/)
