@@ -35,6 +35,9 @@ test('To get free coins it should', async ({ page }, testInfo) => {
         await expect(page.locator('xpath=//*[@id="modal-dialog-alert"]/div[4]/div/div/div/div[1]/h3')).toHaveText(/show video/).then(() => {})
       })
       .catch(async () => {
+        await page.frameLocator('#applixir_parent').locator('xpath=/html/body/div[3]/button').isVisible().then(async () => {
+          await page.frameLocator('#applixir_parent').locator('xpath=/html/body/div[3]/button').click()
+        }).catch(() => {})
         await new Promise(r => setTimeout(r, 35000))
       })
   })

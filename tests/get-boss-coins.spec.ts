@@ -40,6 +40,9 @@ test('To get boss coins it should', async ({ page }, testInfo) => {
       })
     })
     .catch(async () => {
+      await page.frameLocator('#applixir_parent').locator('xpath=/html/body/div[3]/button').isVisible().then(async () => {
+        await page.frameLocator('#applixir_parent').locator('xpath=/html/body/div[3]/button').click()
+      }).catch(() => {})
       await new Promise(r => setTimeout(r, 35000))
     })
   })
